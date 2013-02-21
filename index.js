@@ -69,8 +69,11 @@ function continuousReplicatorPath(game, start){
   var x = start.x, y = start.y;
   var x1, x2, x3, x4, y1, y2, y3, y4, dxy, xnew, ynew;
   
-  for (var t = 0; t < duration; t += timestep){
-    dxy = dxydt(game, x, y); //TODO: implement
+  for (var t = 0; t < duration; t = t + timestep){
+    console.log("Time %s", t);
+    dxy = dxydt(game, x, y);
+    console.log("Dxy:");
+    console.log(dxy);
     
     x1 = dxy[0];
     y1 = dxy[1];
