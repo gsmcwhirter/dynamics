@@ -66,6 +66,7 @@ function continuousReplicatorPath(game, start){
   var timestep = 1e-3;
   var duration = 50;
   
+  var x = start.x, y = start.y;
   var x1, x2, x3, x4, y1, y2, y3, y4, dxy, xnew, ynew;
   
   for (var t = 0; t < duration; t += timestep){
