@@ -1,0 +1,13 @@
+{
+  "name": "dynamics",
+  "repo": "gsmcwhirter/dynamics",
+  "description": "Calculates dynamics paths for 2x2 games",
+  "version": "0.0.1",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "index.js"
+  ]
+}
