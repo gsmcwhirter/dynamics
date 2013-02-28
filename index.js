@@ -98,13 +98,13 @@ function continuousReplicatorPath(game, start, callback, options){
         
         ynew = y + timestep * (y1 + 2*y2 + 2*y3 + y4) / 6.0;
         
-        dxy = dxydt(game, x + (timestep * y1 / 2.0));
+        dxy = dxydt(game, x + (timestep * y1 / 2.0), y);
         x2 = dxy[0];
         
-        dxy = dxydt(game, x + (timestep * y2 / 2.0));
+        dxy = dxydt(game, x + (timestep * y2 / 2.0), y);
         x3 = dxy[0];
         
-        dxy = dxydt(game, x + timestep * x3);
+        dxy = dxydt(game, x + timestep * x3, y);
         x4 = dxy[0];
         
         xnew = x + timestep * (x1 + 2*x2 + 2*x3 + x4) / 6.0;
