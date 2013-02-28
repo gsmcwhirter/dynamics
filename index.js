@@ -63,7 +63,7 @@ function dxydt(game, x, y){
   return dxy;
 }
 
-function continuousReplicatorPath(game, start){
+function continuousReplicatorPath(game, start, callback){
   //start should be an object with .x and .y for coordinate properties
   var path = [start];
   
@@ -71,46 +71,59 @@ function continuousReplicatorPath(game, start){
   var timestep = 0.001;
   var duration = 50;
   
-  var x = start.x, y = start.y;
-  var x1, x2, x3, x4, y1, y2, y3, y4, dxy, xnew, ynew;
-  
-  for (var t = 0; t < duration; t = t + timestep){
-    console.log("Time %s", t);
-    dxy = dxydt(game, x, y);
-    console.log("Dxy:");
-    console.log(dxy);
-    
-    x1 = dxy[0];
-    y1 = dxy[1];
-    
-    dxy = dxydt(game, x, y + (timestep * y1 / 2.0));
-    y2 = dxy[1];
-    
-    dxy = dxydt(game, x, y + (timestep * y2 / 2.0));
-    y3 = dxy[1];
-    
-    dxy = dxydt(game, x, y + timestep * y3);
-    y4 = dxy[1];
-    
-    ynew = y + timestep * (y1 + 2*y2 + 2*y3 + y4) / 6.0;
-    
-    dxy = dxydt(game, x + (timestep * y1 / 2.0));
-    x2 = dxy[0];
-    
-    dxy = dxydt(game, x + (timestep * y2 / 2.0));
-    x3 = dxy[0];
-    
-    dxy = dxydt(game, x + timestep * x3);
-    x4 = dxy[0];
-    
-    xnew = x + timestep * (x1 + 2*x2 + 2*x3 + x4) / 6.0;
-    
-    path.push({x: xnew, y: ynew});
-    x = xnew;
-    y = ynew;
+  var t = 0;
+  function next(x, y){
+    return function (){
+      if (t >= duration){
+        done();
+      }
+      else {
+        t = t + timestep;
+        
+        var x1, x2, x3, x4, y1, y2, y3, y4, dxy, xnew, ynew;
+        
+        console.log("Time %s", t);
+        dxy = dxydt(game, x, y);
+        console.log("Dxy:");
+        console.log(dxy);
+        
+        x1 = dxy[0];
+        y1 = dxy[1];
+        
+        dxy = dxydt(game, x, y + (timestep * y1 / 2.0));
+        y2 = dxy[1];
+        
+        dxy = dxydt(game, x, y + (timestep * y2 / 2.0));
+        y3 = dxy[1];
+        
+        dxy = dxydt(game, x, y + timestep * y3);
+        y4 = dxy[1];
+        
+        ynew = y + timestep * (y1 + 2*y2 + 2*y3 + y4) / 6.0;
+        
+        dxy = dxydt(game, x + (timestep * y1 / 2.0));
+        x2 = dxy[0];
+        
+        dxy = dxydt(game, x + (timestep * y2 / 2.0));
+        x3 = dxy[0];
+        
+        dxy = dxydt(game, x + timestep * x3);
+        x4 = dxy[0];
+        
+        xnew = x + timestep * (x1 + 2*x2 + 2*x3 + x4) / 6.0;
+        
+        path.push({x: xnew, y: ynew});
+        
+        setTimeout(next(xnew, ynew), 10);
+      };
+    }
   }
   
-  return path;
+  function done(){
+    callback(path);
+  }
+  
+  setTimeout(next(start.x, start.y), 10);
 }
 
 function discreteReplicatorPath(game, start, alpha){
