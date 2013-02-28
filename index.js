@@ -1,9 +1,12 @@
+var Emitter = require("emitter")
+  , inherit = require("inherit")
+  ;
 
 module.exports = {
-  continuousReplicatorPath: continuousReplicatorPath
-, discreteReplicatorPath: discreteReplicatorPath
-, bestResponsePath: bestResponsePath
-, continuousReplicatorVector: continuousReplicatorVector
+  ContinuousReplicatorPath: ContinuousReplicatorPath
+, DiscreteReplicatorPath: DiscreteReplicatorPath
+, BestResponsePath: BestResponsePath
+, ContinuousReplicatorVector: ContinuousReplicatorVector
 , util: {
     payoff: payoff
   , avg_payoff: avg_payoff
@@ -11,8 +14,15 @@ module.exports = {
   }
 };
 
+function Generator(game){
+  this.game = game || {};
+}
+
+inherit(Generator, Emitter);
+
 //Payoff for player "typ" (1=row, 0=col) playing strategy "str" against the population
-function payoff(game, str, typ, pops){
+function payoff(str, typ, pops, game){
+  game = game || this.game || {};
   var opp = 1-typ
     , opp0 = pops[opp]
     , opp1 = 1-opp0
@@ -48,12 +58,18 @@ function payoff(game, str, typ, pops){
   return score;
 }
 
+Generator.prototype.payoff = payoff;
+
 //Average payoff for player "typ" (1=row, 0=col) in the population "pops"
-function avg_payoff(game, typ, pops){
+function avg_payoff(typ, pops, game){
+  game = game || this.game || {};
   return pops[typ] * payoff(game, 1-typ, typ, pops) + (1 - pops[typ]) * payoff(game, typ, typ, pops);
 }
 
-function dxydt(game, x, y){
+Generator.prototype.avg_payoff = avg_payoff;
+
+function dxydt(x, y, game){
+  game = game || this.game || {};
   var dxy = [0, 0];
   var pop = [x, y];
   
@@ -63,15 +79,24 @@ function dxydt(game, x, y){
   return dxy;
 }
 
-function continuousReplicatorPath(game, start, callback, options){
-  //start should be an object with .x and .y for coordinate properties
-  var path = [start];
+Generator.prototype.dxydt = dxydt;
+
+function ContinuousReplicatorPath(game, start, options){
+  this.game = game || {};
+  this.options = options || {}; //recognized options are "timestep", "duration", "interval", and "debug" so far
+  this.start = start || {}; //start should be an object with .x and .y for coordinate properties
+}
+
+inherit (ContinuousReplicatorPath, Generator);
+
+ContinuousReplicatorPath.prototype.generate = function (){
   
   // This uses Runge-Kutta 4 with timestep of 1e-3 and duration 50
-  var timestep = options.timestep || 0.001;
-  var duration = options.duration || 50;
+  var timestep = this.options.timestep || 0.001;
+  var duration = this.options.duration || 50;
   
   var t = 0;
+  var self = this;
   function next(x, y){
     return function (){
       if (t >= duration){
@@ -82,36 +107,36 @@ function continuousReplicatorPath(game, start, callback, options){
         
         var x1, x2, x3, x4, y1, y2, y3, y4, dxy, xnew, ynew;
         
-        dxy = dxydt(game, x, y);
+        dxy = self.dxydt(x, y);
         
         x1 = dxy[0];
         y1 = dxy[1];
         
-        dxy = dxydt(game, x, y + (timestep * y1 / 2.0));
+        dxy = self.dxydt(x, y + (timestep * y1 / 2.0));
         y2 = dxy[1];
         
-        dxy = dxydt(game, x, y + (timestep * y2 / 2.0));
+        dxy = self.dxydt(game, x, y + (timestep * y2 / 2.0));
         y3 = dxy[1];
         
-        dxy = dxydt(game, x, y + timestep * y3);
+        dxy = self.dxydt(game, x, y + timestep * y3);
         y4 = dxy[1];
         
         ynew = y + timestep * (y1 + 2*y2 + 2*y3 + y4) / 6.0;
         
-        dxy = dxydt(game, x + (timestep * y1 / 2.0), y);
+        dxy = self.dxydt(x + (timestep * y1 / 2.0), y);
         x2 = dxy[0];
         
-        dxy = dxydt(game, x + (timestep * y2 / 2.0), y);
+        dxy = self.dxydt(x + (timestep * y2 / 2.0), y);
         x3 = dxy[0];
         
-        dxy = dxydt(game, x + timestep * x3, y);
+        dxy = self.dxydt(x + timestep * x3, y);
         x4 = dxy[0];
         
         xnew = x + timestep * (x1 + 2*x2 + 2*x3 + x4) / 6.0;
         
-        path.push({x: xnew, y: ynew});
+        self.emit("point", {x: xnew, y: ynew});
         
-        if (options.debug){
+        if (self.options.debug){
           console.log("Time %s", t);
           console.log("Dxy:");
           console.log(dxy);
@@ -121,28 +146,29 @@ function continuousReplicatorPath(game, start, callback, options){
           console.log("y1, y2, y3, y4: %s, %s, %s, %s", y1, y2, y3, y4);
         }
         
-        
-        
-        setTimeout(next(xnew, ynew), options.interval || 0);
+        if ([xnew, ynew] == [x, y]) self.emit("done");
+        else setTimeout(next(xnew, ynew), self.options.interval || 0); 
       };
     }
   }
   
-  function done(){
-    callback(path);
-  }
-  
-  setTimeout(next(start.x, start.y), 10);
+  setTimeout(next(this.start.x, this.start.y), 10);
 }
 
-function discreteReplicatorPath(game, start, alpha){
+function DiscreteReplicatorPath(game, start, alpha){
   
 }
 
-function bestResponsePath(game, start){
+inherit(DiscreteReplicatorPath, Generator);
+
+function BestResponsePath(game, start){
   
 }
 
-function continuousReplicatorVector(game, start){
+inherit(BestResponsePath, Generator);
+
+function ContinuousReplicatorVector(game, start){
   
 }
+
+inherit(ContinuousReplicatorVector, Generator);
