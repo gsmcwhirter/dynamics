@@ -62,7 +62,8 @@ Generator.prototype.payoff = payoff;
 
 //Average payoff for player "typ" (1=row, 0=col) in the population "pops"
 function avg_payoff(typ, pops, game){
-  return pops[typ] * payoff(1-typ, typ, pops, game) + (1 - pops[typ]) * payoff(typ, typ, pops, game);
+  this.payoff = this.payoff || payoff;
+  return pops[typ] * this.payoff(1-typ, typ, pops, game) + (1 - pops[typ]) * this.payoff(typ, typ, pops, game);
 }
 
 Generator.prototype.avg_payoff = avg_payoff;
@@ -71,8 +72,11 @@ function dxydt(x, y, game){
   var dxy = [0, 0];
   var pop = [x, y];
   
-  dxy[0] = x * (payoff(1, 0, pop, game) - avg_payoff(0, pop, game)); //column value, x is the pct of str 1
-  dxy[1] = y * (payoff(0, 1, pop, game) - avg_payoff(1, pop, game)); //row value, y is the pct of str 0
+  this.payoff = this.payoff || payoff;
+  this.avg_payoff = this.avg_payoff || avg_payoff;
+  
+  dxy[0] = x * (this.payoff(1, 0, pop, game) - this.avg_payoff(0, pop, game)); //column value, x is the pct of str 1
+  dxy[1] = y * (this.payoff(0, 1, pop, game) - this.avg_payoff(1, pop, game)); //row value, y is the pct of str 0
   
   return dxy;
 }
@@ -113,10 +117,10 @@ ContinuousReplicatorPath.prototype.generate = function (){
         dxy = self.dxydt(x, y + (timestep * y1 / 2.0));
         y2 = dxy[1];
         
-        dxy = self.dxydt(game, x, y + (timestep * y2 / 2.0));
+        dxy = self.dxydt(x, y + (timestep * y2 / 2.0));
         y3 = dxy[1];
         
-        dxy = self.dxydt(game, x, y + timestep * y3);
+        dxy = self.dxydt(x, y + timestep * y3);
         y4 = dxy[1];
         
         ynew = y + timestep * (y1 + 2*y2 + 2*y3 + y4) / 6.0;
