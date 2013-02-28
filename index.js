@@ -4,56 +4,61 @@ module.exports = {
 , discreteReplicatorPath: discreteReplicatorPath
 , bestResponsePath: bestResponsePath
 , continuousReplicatorVector: continuousReplicatorVector
+, util: {
+    payoff: payoff
+  , avg_payoff: avg_payoff
+  , dxydt: dxydt
+  }
+};
+
+//Payoff for player "typ" (1=row, 0=col) playing strategy "str" against the population
+function payoff(game, str, typ, pops){
+  var opp = 1-typ
+    , opp0 = pops[opp]
+    , opp1 = 1-opp0
+    , score = 0
+    ;
+  
+  if (typ == 1){ //row player
+    if (str == 0){
+      score = (game['tl-r'] || 0) * opp1 + (game['tr-r'] || 0) * opp0;
+    }
+    else if (str == 1){
+      score = (game['bl-r'] || 0) * opp1 + (game['br-r'] || 0) * opp0;
+    }
+    else {
+      throw new Error("Unknown str parameter value: " + str);
+    }
+  }
+  else if (typ == 0){ //col player
+    if (str == 0){
+      score = (game['tl-c'] || 0) * opp0 + (game['bl-c'] || 0) * opp1;
+    }
+    else if (str == 1){
+      score = (game['tr-c'] || 0) * opp0 + (game['br-c'] || 0) * opp1;
+    }
+    else {
+      throw new Error("Unknown str parameter value: " + str);
+    }
+  }
+  else {
+    throw new Error("Unknown typ parameter value: " + typ);
+  }
+  
+  return score;
+}
+
+//Average payoff for player "typ" (1=row, 0=col) in the population "pops"
+function avg_payoff(game, typ, pops){
+  return pops[typ] * payoff(game, 1-typ, typ, pops) + (1 - pops[typ]) * payoff(game, typ, typ, pops);
 }
 
 function dxydt(game, x, y){
   var dxy = [0, 0];
   var pop = [x, y];
   
-  //Payoff for player "typ" playing strategy "str" against the population
-  function payoff(str, typ, pops){
-    var opp = 1-typ
-      , opp0 = pops[opp]
-      , opp1 = 1-opp0
-      , score = 0
-      ;
-    
-    if (typ == 1){
-      if (str == 0){
-        score = game['tl-r'] * opp1 + game['tr-r'] * opp0;
-      }
-      else if (str == 1){
-        score = game['bl-r'] * opp1 + game['br-r'] * opp0;
-      }
-      else {
-        throw new Error("Unknown str parameter value: " + str);
-      }
-    }
-    else if (typ == 0){
-      if (str == 0){
-        score = game['tl-c'] * opp0 + game['tr-c'] * opp1;
-      }
-      else if (str == 1){
-        score = game['bl-c'] * opp0 + game['br-c'] * opp1;
-      }
-      else {
-        throw new Error("Unknown str parameter value: " + str);
-      }
-    }
-    else {
-      throw new Error("Unknown typ parameter value: " + typ);
-    }
-    
-    return score;
-  }
-  
-  //Average payoff for player "typ" in the population "pops"
-  function avg_payoff(typ, pops){
-    return pops[typ] * payoff(1-typ, typ, pops) + (1 - pops[typ]) * payoff(typ, typ, pops);
-  }
-  
-  dxy[0] = x * (payoff(1, 0, pop) - avg_payoff(0, pop));
-  dxy[1] = y * (payoff(0, 1, pop) - avg_payoff(1, pop));
+  dxy[0] = x * (payoff(game, 1, 0, pop) - avg_payoff(game, 0, pop)); //column value, x is the pct of str 1
+  dxy[1] = y * (payoff(game, 0, 1, pop) - avg_payoff(game, 1, pop)); //row value, y is the pct of str 0
   
   return dxy;
 }
@@ -63,7 +68,7 @@ function continuousReplicatorPath(game, start){
   var path = [start];
   
   // This uses Runge-Kutta 4 with timestep of 1e-3 and duration 50
-  var timestep = 1e-3;
+  var timestep = 0.001;
   var duration = 50;
   
   var x = start.x, y = start.y;
