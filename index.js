@@ -123,7 +123,7 @@ function continuousReplicatorPath(game, start, callback, options){
         
         
         
-        setTimeout(next(xnew, ynew), 10);
+        setTimeout(next(xnew, ynew), options.interval || 0);
       };
     }
   }
