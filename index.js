@@ -63,13 +63,13 @@ function dxydt(game, x, y){
   return dxy;
 }
 
-function continuousReplicatorPath(game, start, callback){
+function continuousReplicatorPath(game, start, callback, options){
   //start should be an object with .x and .y for coordinate properties
   var path = [start];
   
   // This uses Runge-Kutta 4 with timestep of 1e-3 and duration 50
-  var timestep = 0.001;
-  var duration = 50;
+  var timestep = options.timestep || 0.001;
+  var duration = options.duration || 50;
   
   var t = 0;
   function next(x, y){
