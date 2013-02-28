@@ -102,7 +102,7 @@ ContinuousReplicatorPath.prototype.generate = function (){
   function next(x, y){
     return function (){
       if (t >= duration){
-        done();
+        self.emit("done");
       }
       else {
         t = t + timestep;
