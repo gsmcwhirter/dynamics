@@ -62,19 +62,17 @@ Generator.prototype.payoff = payoff;
 
 //Average payoff for player "typ" (1=row, 0=col) in the population "pops"
 function avg_payoff(typ, pops, game){
-  game = game || this.game || {};
-  return pops[typ] * payoff(game, 1-typ, typ, pops) + (1 - pops[typ]) * payoff(game, typ, typ, pops);
+  return pops[typ] * payoff(1-typ, typ, pops, game) + (1 - pops[typ]) * payoff(typ, typ, pops, game);
 }
 
 Generator.prototype.avg_payoff = avg_payoff;
 
 function dxydt(x, y, game){
-  game = game || this.game || {};
   var dxy = [0, 0];
   var pop = [x, y];
   
-  dxy[0] = x * (payoff(game, 1, 0, pop) - avg_payoff(game, 0, pop)); //column value, x is the pct of str 1
-  dxy[1] = y * (payoff(game, 0, 1, pop) - avg_payoff(game, 1, pop)); //row value, y is the pct of str 0
+  dxy[0] = x * (payoff(1, 0, pop, game) - avg_payoff(0, pop, game)); //column value, x is the pct of str 1
+  dxy[1] = y * (payoff(0, 1, pop, game) - avg_payoff(1, pop, game)); //row value, y is the pct of str 0
   
   return dxy;
 }
