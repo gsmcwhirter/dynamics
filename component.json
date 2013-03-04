@@ -6,11 +6,18 @@
   "keywords": [],
   "dependencies": {
     "component/emitter": "*",
-    "component/inherit": "*"
+    "component/inherit": "*",
+    "segmentio/extend": "*"
   },
   "development": {},
   "license": "MIT",
   "scripts": [
     "index.js"
+  , "util.js"
+  , "generator.js"
+  , "continuous.js"
+  , "discrete.js"
+  , "bestresponse.js"
+  , "vectors.js"
   ]
 }
