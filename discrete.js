@@ -63,7 +63,7 @@ DiscreteReplicatorPath.prototype.generate = function (){
         newy = y;
       }
       else {
-        newy = (alpha + self.payoff(0, 1, [x, y])) * x / (alpha + avgy);
+        newy = (alpha + self.payoff(0, 1, [x, y])) * y / (alpha + avgy);
       }
       
       self.emit("point", {x: newx, y: newy});
