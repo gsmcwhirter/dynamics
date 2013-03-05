@@ -81,7 +81,7 @@ module.exports = function BRCurves(game, options){
       rowpath.push({x: qlim, y: 0});
       rowpath.push({x: qlim, y: 1});
       rowpath.push({x: 1, y: 1});
-    } else if (qlim > 1f) {
+    } else if (qlim > 1) {
       rowpath.push({x: 0, y: 0});
       rowpath.push({x: 1, y: 0});
     } else {
@@ -105,7 +105,7 @@ module.exports = function BRCurves(game, options){
       colpath.push({x: 0, y: plim});
       colpath.push({x: 1, y: plim});
       colpath.push({x: 1, y: 0});
-    } else if (plim > 1f){
+    } else if (plim > 1){
       colpath.push({x: 1, y: 1});
       colpath.push({x: 1, y: 0});
     } else {
@@ -119,7 +119,7 @@ module.exports = function BRCurves(game, options){
       colpath.push({x: 0, y: plim});
       colpath.push({x: 1, y: plim});
       colpath.push({x: 1, y: 1});
-    } else if (plim > 1f) {
+    } else if (plim > 1) {
       colpath.push({x: 0, y: 1});
       colpath.push({x: 0, y: 0});
     } else {
