@@ -189,8 +189,9 @@ BestResponsePath.prototype.generate = function (){
           done = true;
         }
         
+        //y coordinate is backwards for graphing
         if (!skipdraw){
-          self.emit("point", {x: newx, y: newy});
+          self.emit("point", {x: newx, y: 1-newy});
         }
         
         setTimeout(next(newx, newy, x, y), self.options.interval);
