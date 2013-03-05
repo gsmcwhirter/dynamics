@@ -3,7 +3,7 @@ var Generator = require("./generator")
   , extend = require("extend")
   ;
 
-function BestResponsePath(game, start){
+function BestResponsePath(game, start, options){
   this.game = extend({
     "tl-r": 0
   , "tl-c": 0
