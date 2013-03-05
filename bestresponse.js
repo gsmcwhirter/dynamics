@@ -1,5 +1,6 @@
 var Generator = require("./generator")
   , inherit = require("inherit")
+  , extend = require("extend")
   ;
 
 function BestResponsePath(game, start){
