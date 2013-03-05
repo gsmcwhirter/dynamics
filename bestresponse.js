@@ -134,8 +134,7 @@ BestResponsePath.prototype.generate = function (){
           var targetx = self.getTargetPX(x, y)
             , targety = self.getTargetQY(x, y)
             ;
-            
-            
+   
           if ((x < self.qlim && targetx > self.qlim) ||
               (x > self.qlim && targetx < self.qlim) ||
               (y < self.plim && targety > self.plim) ||
@@ -154,7 +153,7 @@ BestResponsePath.prototype.generate = function (){
                 , hitqy = m * self.qlim + b
                 , pdist = Math.pow(x - hitpx, 2) + Math.pow(y - hitpy, 2)
                 , qdist = Math.pow(x - hitqx, 2) + Math.pow(y - hitqy, 2)
-                , targetdist = Math.pow(x - targetx, 2) + Math.pow(y - targety, 2)
+                //, targetdist = Math.pow(x - targetx, 2) + Math.pow(y - targety, 2)
                 , samep = ((targetx - x) * (hitpx - x) + (targety - y) * (hitpy - y)) > 0
                 , sameq = ((targetx - x) * (hitqx - x) + (targety - y) * (hitqy - y)) > 0
                 ;
@@ -175,7 +174,7 @@ BestResponsePath.prototype.generate = function (){
                 }
                 else {
                   newx = hitqx;
-                  newx = hitqy;
+                  newy = hitqy;
                 }
             }
           }
