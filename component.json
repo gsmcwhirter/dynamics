@@ -18,6 +18,7 @@
   , "continuous.js"
   , "discrete.js"
   , "bestresponse.js"
+  , "brcurves.js"
   , "vectors.js"
   ]
 }
