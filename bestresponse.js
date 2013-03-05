@@ -78,7 +78,7 @@ BestResponsePath.prototype.generate = function (){
   var self = this;
   function next(x, y, lastx, lasty){
     lastx = lastx || x;
-    lasty = lsaty || y;
+    lasty = lasty || y;
     
     return function (){
       var newx, newy;
