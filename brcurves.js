@@ -27,82 +27,81 @@ module.exports = function BRCurves(game, options){
     debug: false
   }, options);
 
-  //All y coordinates appear backwards because graphing coords start in top left
   //row player response curve
   if (A + C > 0){
     if (qlim <= 1 && qlim >= 0){
-      rowpath.push({x: 0, y: 0});
-      rowpath.push({x: qlim, y: 0});
+      rowpath.push({x: 0, y: 1});
       rowpath.push({x: qlim, y: 1});
-      rowpath.push({x: 1, y: 1});
+      rowpath.push({x: qlim, y: 0});
+      rowpath.push({x: 1, y: 0});
     } else if (qlim > 1) {
       //play this
-      rowpath.push({x: 0, y: 0});
-      rowpath.push({x: 1, y: 0});
-    } else {
       rowpath.push({x: 0, y: 1});
       rowpath.push({x: 1, y: 1});
+    } else {
+      rowpath.push({x: 0, y: 0});
+      rowpath.push({x: 1, y: 0});
     }
   } 
   else if (A + C < 0){
     if (qlim <= 1 && qlim >= 0){
-      rowpath.push({x: 0, y: 1});
-      rowpath.push({x: qlim, y: 1});
+      rowpath.push({x: 0, y: 0});
       rowpath.push({x: qlim, y: 0});
-      rowpath.push({x: 1, y: 0});
-    } else if (qlim > 1) {
-      rowpath.push({x: 0, y: 1});
+      rowpath.push({x: qlim, y: 1});
       rowpath.push({x: 1, y: 1});
-    } else {
+    } else if (qlim > 1) {
       rowpath.push({x: 0, y: 0});
       rowpath.push({x: 1, y: 0});
+    } else {
+      rowpath.push({x: 0, y: 1});
+      rowpath.push({x: 1, y: 1});
     }
   } 
   else if (A > 0) {
-    rowpath.push({x: 0, y: 0});
-    rowpath.push({x: 1, y: 0});
-  } 
-  else if (A < 0) {
     rowpath.push({x: 0, y: 1});
     rowpath.push({x: 1, y: 1});
+  } 
+  else if (A < 0) {
+    rowpath.push({x: 0, y: 0});
+    rowpath.push({x: 1, y: 0});
   }
 
   //column player response curve
   if (B + D > 0){
     if (plim >= 0 && plim <= 1){
-      colpath.push({x: 0, y: 0});
-      colpath.push({x: 0, y: 1-plim});
-      colpath.push({x: 1, y: 1-plim});
-      colpath.push({x: 1, y: 1});
-    } else if (plim > 1){
-      colpath.push({x: 1, y: 0});
-      colpath.push({x: 1, y: 1});
-    } else {
-      colpath.push({x: 0, y: 0});
       colpath.push({x: 0, y: 1});
+      colpath.push({x: 0, y: plim});
+      colpath.push({x: 1, y: plim});
+      colpath.push({x: 1, y: 0});
+    } else if (plim > 1){
+      colpath.push({x: 1, y: 1});
+      colpath.push({x: 1, y: 0});
+    } else {
+      colpath.push({x: 0, y: 1});
+      colpath.push({x: 0, y: 0});
     }
   } 
   else if (B + D < 0){
     if (plim >= 0 && plim <= 1){
-      colpath.push({x: 0, y: 1});
-      colpath.push({x: 0, y: 1-plim});
-      colpath.push({x: 1, y: 1-plim});
-      colpath.push({x: 1, y: 0});
-    } else if (plim > 1) {
       colpath.push({x: 0, y: 0});
-      colpath.push({x: 0, y: 1});
-    } else {
-      colpath.push({x: 1, y: 0});
+      colpath.push({x: 0, y: plim});
+      colpath.push({x: 1, y: plim});
       colpath.push({x: 1, y: 1});
+    } else if (plim > 1) {
+      colpath.push({x: 0, y: 1});
+      colpath.push({x: 0, y: 0});
+    } else {
+      colpath.push({x: 1, y: 1});
+      colpath.push({x: 1, y: 0});
     }
   } 
   else if (D > 0) {
-    colpath.push({x: 1, y: 1});
     colpath.push({x: 1, y: 0});
+    colpath.push({x: 1, y: 1});
   } 
   else if (D < 0) {
-    colpath.push({x: 0, y: 1});
     colpath.push({x: 0, y: 0});
+    colpath.push({x: 0, y: 1});
   }
   
   return [rowpath, colpath];
