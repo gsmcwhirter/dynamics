@@ -49,30 +49,18 @@ ContinuousReplicatorPath.prototype.generate = function (){
         
         dxy = self.dxydt(x, y);
         
-        x1 = dxy[0];
-        y1 = dxy[1];
+        x1 = timestep * dxy[0];
+        y1 = timestep * dxy[1];
         
-        dxy = self.dxydt(x, y + (timestep * y1 / 2.0));
-        y2 = dxy[1];
+        y2 = timestep * self.dydt(x, y + (y1 / 2.0));
+        y3 = timestep * self.dydt(x, y + (y2 / 2.0));
+        y4 = timestep * self.dydt(x, y + y3);
+        ynew = y + (y1 + 2*y2 + 2*y3 + y4) / 6.0;
         
-        dxy = self.dxydt(x, y + (timestep * y2 / 2.0));
-        y3 = dxy[1];
-        
-        dxy = self.dxydt(x, y + timestep * y3);
-        y4 = dxy[1];
-        
-        ynew = y + timestep * (y1 + 2*y2 + 2*y3 + y4) / 6.0;
-        
-        dxy = self.dxydt(x + (timestep * y1 / 2.0), y);
-        x2 = dxy[0];
-        
-        dxy = self.dxydt(x + (timestep * y2 / 2.0), y);
-        x3 = dxy[0];
-        
-        dxy = self.dxydt(x + timestep * x3, y);
-        x4 = dxy[0];
-        
-        xnew = x + timestep * (x1 + 2*x2 + 2*x3 + x4) / 6.0;
+        x2 = timestep * self.dxdt(x + (y1 / 2.0), y);
+        x3 = timestep * self.dxdt(x + (y2 / 2.0), y);
+        x4 = timestep * self.dxdt(x + x3, y);
+        xnew = x + (x1 + 2*x2 + 2*x3 + x4) / 6.0;
         
         self.emit("point", {x: xnew, y: ynew});
         

@@ -2,6 +2,8 @@ module.exports = {
   payoff: payoff
 , avg_payoff: avg_payoff
 , dxydt: dxydt
+, dxdt: dxdt
+, dydt: dydt
 };
 
 //Payoff for player "typ" (1=row, 0=col) playing strategy "str" against the population
@@ -49,14 +51,22 @@ function avg_payoff(typ, pops, game){
 }
 
 function dxydt(x, y, game){
-  var dxy = [0, 0];
-  var pop = [x, y];
+  this.dxdt = this.dxdt || dxdt;
+  this.dydt = this.dydt || dydt;
   
+  return [this.dxdt([x, y], game), this.dydt([x, y], game)];
+}
+
+function dxdt(pop, game){
   this.payoff = this.payoff || payoff;
   this.avg_payoff = this.avg_payoff || avg_payoff;
   
-  dxy[0] = x * (this.payoff(1, 0, pop, game) - this.avg_payoff(0, pop, game)); //column value, x is the pct of str 1
-  dxy[1] = y * (this.payoff(0, 1, pop, game) - this.avg_payoff(1, pop, game)); //row value, y is the pct of str 0
+  return x * (this.payoff(1, 0, pop, game) - this.avg_payoff(0, pop, game));
+}
+
+function dydt(pop, game){
+  this.payoff = this.payoff || payoff;
+  this.avg_payoff = this.avg_payoff || avg_payoff;
   
-  return dxy;
+  return y * (this.payoff(0, 1, pop, game) - this.avg_payoff(1, pop, game));
 }

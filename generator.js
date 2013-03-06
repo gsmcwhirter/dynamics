@@ -12,7 +12,7 @@ module.exports = Generator;
 inherit(Generator, Emitter);
 
 Generator.prototype.payoff = util.payoff;
-
 Generator.prototype.avg_payoff = util.avg_payoff;
-
 Generator.prototype.dxydt = util.dxydt;
+Generator.prototype.dxdt = util.dxdt;
+Generator.prototype.dydt = util.dydt;
