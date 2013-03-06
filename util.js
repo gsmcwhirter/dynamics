@@ -54,7 +54,7 @@ function dxydt(x, y, game){
   this.dxdt = this.dxdt || dxdt;
   this.dydt = this.dydt || dydt;
   
-  return [this.dxdt([x, y], game), this.dydt([x, y], game)];
+  return [this.dxdt(x, y, game), this.dydt(x, y, game)];
 }
 
 function dxdt(x, y, game){
