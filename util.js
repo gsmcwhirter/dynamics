@@ -57,16 +57,18 @@ function dxydt(x, y, game){
   return [this.dxdt([x, y], game), this.dydt([x, y], game)];
 }
 
-function dxdt(pop, game){
+function dxdt(x, y, game){
+  var pop = [x, y];
   this.payoff = this.payoff || payoff;
   this.avg_payoff = this.avg_payoff || avg_payoff;
   
-  return pop[0] * (this.payoff(1, 0, pop, game) - this.avg_payoff(0, pop, game));
+  return x * (this.payoff(1, 0, pop, game) - this.avg_payoff(0, pop, game));
 }
 
-function dydt(pop, game){
+function dydt(x, y, game){
+  var pop = [x, y];
   this.payoff = this.payoff || payoff;
   this.avg_payoff = this.avg_payoff || avg_payoff;
   
-  return pop[1] * (this.payoff(0, 1, pop, game) - this.avg_payoff(1, pop, game));
+  return y * (this.payoff(0, 1, pop, game) - this.avg_payoff(1, pop, game));
 }
